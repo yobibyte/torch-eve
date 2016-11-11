@@ -12,3 +12,9 @@ Right now you can just test it on MNIST. CIFAR evaluation is in progress.
 ```bash                                                                         
   th mnist-example.lua -f                                                     
 ```
+
+## References
+
+* Original [paper](https://arxiv.org/abs/1611.01505v1).
+* The initial code was taken from [optim.adam](https://github.com/torch/optim) and modified to eve.
+* The test code is taken from [optim](https://github.com/torch/optim) test folder.
