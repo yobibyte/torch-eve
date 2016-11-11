@@ -64,7 +64,7 @@ function optim.eve(opfunc, x, config, state)
    -- objective value at t-1
    state.f_prev = state.f_prev or 0
    -- objective value at t-2
-   state.f_preprevv = state.f_preprev or 0
+   state.f_preprev = state.f_preprev or 0
 
 
    state.t = state.t + 1
