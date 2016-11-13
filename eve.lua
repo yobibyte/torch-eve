@@ -50,7 +50,7 @@ function optim.eve(opfunc, x, config, state)
    if wd ~= 0 then
       dfdx:add(wd, x)
    end
-
+    
    -- Initialization
    state.t = state.t or 0
    -- Exponential moving average of gradient values
@@ -64,6 +64,9 @@ function optim.eve(opfunc, x, config, state)
    -- objective value at t-2
    state.f_prev = state.f_prev or 0
 
+   -- (3) learning rate decay (annealing)                                       
+   local clr = lr / (1 + state.t*lrd) 
+   
    state.t = state.t + 1
 
    -- Decay the first and second moment running average coefficient
@@ -87,11 +90,10 @@ function optim.eve(opfunc, x, config, state)
       state.f_prev = fx 
       state.d = 1
    end
-
    state.denom:copy(v_corrected):sqrt():mul(state.d):add(epsilon)
 
    -- (4) update x
-   x:addcdiv(-lr, m_corrected, state.denom)
+   x:addcdiv(-clr, m_corrected, state.denom)
 
    -- return x*, f(x) before optimization
    return x, {fx}
