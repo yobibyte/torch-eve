@@ -61,11 +61,8 @@ function optim.eve(opfunc, x, config, state)
    state.denom = state.denom or x.new(dfdx:size()):zero()
    -- relative change moving average
    state.d = state.d or 1
-   -- objective value at t-1
-   state.f_prev = state.f_prev or 0
    -- objective value at t-2
-   state.f_preprev = state.f_preprev or 0
-
+   state.f_prev = state.f_prev or 0
 
    state.t = state.t + 1
 
@@ -78,18 +75,16 @@ function optim.eve(opfunc, x, config, state)
    if state.t > 1 then
       local delta_lower = k_lower+1
       local delta_upper = k_upper+1
-      if fx <= state.f_preprev then
+      if fx >= state.f_prev then
          delta_lower = 1/(k_upper+1)
          delta_upper = 1/(k_lower+1)         
       end
-      local c = torch.min(torch.Tensor{torch.max(torch.Tensor{fx/state.f_preprev, delta_lower}), delta_upper})  
-      state.f_preprev = state.f_prev
-      state.f_prev = c*state.f_prev
-      local r = torch.abs(state.f_prev-state.f_preprev)/torch.min(torch.Tensor{state.f_prev, state.f_preprev})
+      local c = torch.min(torch.Tensor{torch.max(torch.Tensor{fx/state.f_prev, delta_lower}), delta_upper})  
+      local f_hat = c*state.f_prev
+      local r = torch.abs(f_hat-state.f_prev)/torch.min(torch.Tensor{f_hat, state.f_prev})
       state.d = beta3*state.d + (1-beta3)*r
    else
-      state.f_preprev = state.f_prev
-      state.f_prev    = fx 
+      state.f_prev = fx 
       state.d = 1
    end
 
